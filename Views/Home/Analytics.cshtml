@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<div class="fade-in-up">
+    <h2 class="gradient-text mb-4">Claim Analytics</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="glass-card p-4">
+                <h5 class="mb-3">Claims by Status</h5>
+                <canvas id="statusChart" height="300"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card p-4">
+                <h5 class="mb-3">Monthly Claims Trend</h5>
+                <canvas id="monthlyChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Status Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Submitted', 'Approved', 'Rejected', 'Processing'],
+                datasets: [{
+                    data: [25, 40, 10, 25],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(245, 158, 11, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: 'var(--text-primary)' }
+                    }
+                }
+            }
+        });
+
+        // Monthly Trend Chart
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Claims Submitted',
+                    data: [12, 19, 15, 25, 22, 30],
+                    borderColor: 'rgba(99, 102, 241, 0.8)',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: 'var(--text-secondary)' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: 'var(--text-secondary)' }
+                    }
+                }
+            }
+        });
+    </script>
+}

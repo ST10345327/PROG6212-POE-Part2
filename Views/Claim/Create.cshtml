@@ -1,0 +1,218 @@
+@model CMCS.WebApp.Models.Claim
+
+@{
+    ViewData["Title"] = "Submit New Claim";
+}
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    
+                    <!-- Claim Period Input -->
+                    <div class="mb-3">
+                        <label asp-for="Period" class="form-label">Claim Period (Month/Year)</label>
+                        <input asp-for="Period" class="form-control" type="month" />
+                        <span asp-validation-for="Period" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Hours and Rate Inputs -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="HoursWorked" class="form-label">Hours Worked</label>
+                                <input asp-for="HoursWorked" class="form-control" id="hoursWorked" />
+                                <span asp-validation-for="HoursWorked" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Rate" class="form-label">Hourly Rate (R)</label>
+                                <input asp-for="Rate" class="form-control" id="hourlyRate" />
+                                <span asp-validation-for="Rate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Amount Display -->
+                    <div class="mb-3">
+                        <label class="form-label">Total Amount</label>
+                        <div class="alert alert-info">
+                            <h5 class="mb-0" id="totalAmountDisplay">R 0.00</h5>
+                        </div>
+                    </div>
+                    
+                    <!-- DRAG & DROP FILE UPLOAD SECTION -->
+                    <div class="mb-3">
+                        <label class="form-label">Supporting Documents</label>
+                        
+                        <!-- Drag & Drop Zone -->
+                        <div class="file-drop-zone" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h5>Drag & Drop Files Here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <!-- Hidden file input triggered by button -->
+                            <input asp-for="SupportingFiles" class="d-none" id="fileInput" multiple />
+                            <button type="button" class="btn btn-outline-primary mt-2" 
+                                    onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Select Files
+                            </button>
+                        </div>
+                        
+                        <!-- File Preview Area -->
+                        <div class="file-preview-grid mt-3" id="filePreview"></div>
+                        
+                        <small class="form-text text-muted">
+                            Supported formats: PDF, Word, Excel, Images (Max 10MB each)
+                        </small>
+                        <span asp-validation-for="SupportingFiles" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Claim
+                        </button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Real-time total amount calculation
+        function calculateTotal() {
+            const hours = parseFloat(document.getElementById('hoursWorked').value) || 0;
+            const rate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const total = hours * rate;
+            document.getElementById('totalAmountDisplay').textContent = 'R ' + total.toFixed(2);
+        }
+
+        // Event listeners for real-time calculation
+        document.getElementById('hoursWorked').addEventListener('input', calculateTotal);
+        document.getElementById('hourlyRate').addEventListener('input', calculateTotal);
+
+        // ===== DRAG & DROP FUNCTIONALITY =====
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+
+        // Handle drag over event - visual feedback when dragging over
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault(); // Prevent default browser behavior
+            this.classList.add('drag-over'); // Add visual active state
+        });
+
+        // Handle drag leave event - remove visual feedback
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over'); // Remove active state
+        });
+
+        // Handle drop event - process dropped files
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over'); // Remove active state
+            handleFileSelect(e.dataTransfer.files); // Process dropped files
+        });
+
+        // Handle file input change - process selected files
+        fileInput.addEventListener('change', function() {
+            handleFileSelect(this.files); // Process selected files
+        });
+
+        // Process selected files and create previews
+        function handleFileSelect(files) {
+            filePreview.innerHTML = ''; // Clear previous previews
+            
+            // Process each file
+            Array.from(files).forEach((file, index) => {
+                if (validateFile(file)) {
+                    createFilePreview(file, index); // Create preview if valid
+                }
+            });
+        }
+
+        // Validate file type and size
+        function validateFile(file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB limit in bytes
+            
+            // Allowed file types
+            const allowedTypes = [
+                'image/jpeg', 'image/png', 'image/gif', // Images
+                'application/pdf', // PDF
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // Excel
+            ];
+            
+            // Check file size
+            if (file.size > maxSize) {
+                alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                return false;
+            }
+            
+            // Check file type
+            if (!allowedTypes.includes(file.type)) {
+                alert(`File type not allowed for "${file.name}". Please upload PDF, Word, Excel, or image files.`);
+                return false;
+            }
+            
+            return true; // File is valid
+        }
+
+        // Create preview for a file
+        function createFilePreview(file, index) {
+            const reader = new FileReader(); // File reader for preview
+            
+            reader.onload = function(e) {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'file-preview-item';
+                
+                let content = '';
+                // Different preview based on file type
+                if (file.type.startsWith('image/')) {
+                    content = `<img src="${e.target.result}" class="mb-2">`; // Image preview
+                } else if (file.type === 'application/pdf') {
+                    content = `<i class="fas fa-file-pdf fa-2x text-danger mb-2"></i>`; // PDF icon
+                } else if (file.type.includes('wordprocessingml')) {
+                    content = `<i class="fas fa-file-word fa-2x text-primary mb-2"></i>`; // Word icon
+                } else if (file.type.includes('spreadsheetml')) {
+                    content = `<i class="fas fa-file-excel fa-2x text-success mb-2"></i>`; // Excel icon
+                } else {
+                    content = `<i class="fas fa-file fa-2x text-secondary mb-2"></i>`; // Generic file icon
+                }
+                
+                // Preview item HTML structure
+                previewItem.innerHTML = `
+                    ${content}
+                    <small class="d-block text-truncate" style="max-width: 100px;">${file.name}</small>
+                    <small class="text-muted">${(file.size / 1024 / 1024).toFixed(1)}MB</small>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-1" 
+                            onclick="this.parentElement.remove()"></button>
+                `;
+                
+                filePreview.appendChild(previewItem); // Add to preview area
+            };
+            
+            // Read file for preview (images only need data URL)
+            if (file.type.startsWith('image/')) {
+                reader.readAsDataURL(file); // Read image as data URL for preview
+            } else {
+                reader.readAsArrayBuffer(file.slice(0, 1)); // Minimal read for non-images
+            }
+        }
+
+        // Initialize total calculation on page load
+        document.addEventListener('DOMContentLoaded', calculateTotal);
+    </script>
+}

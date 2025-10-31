@@ -1,0 +1,74 @@
+@{
+    ViewData["Title"] = "Dashboard - CMCS";
+}
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4">Contract Monthly Claim System</h1>
+        <p class="lead">Streamlined claim management for academic staff</p>
+        <div class="alert alert-info">
+            <strong>Database Status:</strong> @ViewBag.DatabaseStatus
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.UserCount</h3>
+                    <p>Registered Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.ClaimCount</h3>
+                    <p>Total Claims</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.PendingClaims</h3>
+                    <p>Pending Approval</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">For Lecturers</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p>Submit your monthly claims and track their status</p>
+                    <a asp-controller="Claim" asp-action="Create" class="btn btn-primary me-2">
+                        Submit New Claim
+                    </a>
+                    <a asp-controller="Claim" asp-action="Index" class="btn btn-outline-primary">
+                        View My Claims
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">For Coordinators & Managers</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p>Review and approve pending claims</p>
+                    <a asp-controller="Claim" asp-action="Approvals" class="btn btn-success">
+                        Review Claims
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

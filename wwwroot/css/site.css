@@ -1,22 +1,112 @@
-html {
-  font-size: 14px;
+/* Academic Purple Theme - CMCS WebApp */
+/* Primary color scheme for academic institution */
+
+/* ===== COLOR VARIABLES ===== */
+:root {
+    /* Main brand colors */
+    --primary: #7c3aed;      /* Academic purple - primary brand color */
+    --primary-dark: #6d28d9; /* Darker purple for hover states */
+    
+    /* Status colors */
+    --success: #059669;      /* Green for approved status */
+    --warning: #d97706;      /* Orange for pending status */
+    --danger: #dc2626;       /* Red for rejected status */
+    
+    /* Neutral colors */
+    --background: #f8fafc;   /* Light gray page background */
+    --surface: #ffffff;      /* White for cards and containers */
+    --text-primary: #1e293b; /* Dark blue-gray for text */
+    --border: #e2e8f0;       /* Light gray for borders */
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* ===== BASE STYLES ===== */
 body {
-  margin-bottom: 60px;
+    background-color: var(--background);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar with academic purple */
+.navbar {
+    background-color: var(--primary) !important;
+}
+
+/* Primary buttons */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Status badges */
+.bg-success { background-color: var(--success) !important; }
+.bg-warning { background-color: var(--warning) !important; }
+.bg-danger { background-color: var(--danger) !important; }
+
+/* Card styling */
+.card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: var(--primary);
+    color: white;
+    border-bottom: none;
+}
+
+/* ===== DRAG & DROP FILE UPLOAD STYLES ===== */
+/* Main drop zone container */
+.file-drop-zone {
+    border: 2px dashed var(--border);          /* Dashed border for drop area */
+    border-radius: 8px;                        /* Rounded corners */
+    padding: 40px 20px;                        /* Generous padding */
+    text-align: center;                        /* Center align content */
+    background-color: #f8fafc;                 /* Light background */
+    transition: all 0.3s ease;                 /* Smooth transitions */
+    cursor: pointer;                           /* Pointer cursor on hover */
+}
+
+/* Hover state for drop zone */
+.file-drop-zone:hover {
+    border-color: var(--primary);              /* Purple border on hover */
+    background-color: #faf5ff;                 /* Light purple background */
+}
+
+/* Active state when dragging files over */
+.file-drop-zone.drag-over {
+    border-color: var(--primary);              /* Purple border when active */
+    background-color: #f3e8ff;                 /* Medium purple background */
+}
+
+/* Container for file preview thumbnails */
+.file-preview-grid {
+    display: flex;                             /* Flexbox layout */
+    flex-wrap: wrap;                           /* Wrap to multiple lines */
+    gap: 10px;                                 /* Space between items */
+    margin-top: 15px;                          /* Space above previews */
+}
+
+/* Individual file preview item */
+.file-preview-item {
+    border: 1px solid var(--border);           /* Border around each file */
+    border-radius: 6px;                        /* Rounded corners */
+    padding: 10px;                             /* Internal spacing */
+    text-align: center;                        /* Center content */
+    background: white;                         /* White background */
+    position: relative;                        /* For positioning close button */
+    width: 120px;                              /* Fixed width */
+}
+
+/* File preview images */
+.file-preview-item img {
+    max-width: 100%;                           /* Responsive images */
+    height: 60px;                              /* Fixed height */
+    object-fit: cover;                         /* Crop to fit */
 }
