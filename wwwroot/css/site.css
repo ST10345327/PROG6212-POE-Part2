@@ -4,19 +4,27 @@
 /* ===== COLOR VARIABLES ===== */
 :root {
     /* Main brand colors */
-    --primary: #7c3aed;      /* Academic purple - primary brand color */
-    --primary-dark: #6d28d9; /* Darker purple for hover states */
+    --primary: #7c3aed;
+    --primary-dark: #6d28d9;
     
     /* Status colors */
-    --success: #059669;      /* Green for approved status */
-    --warning: #d97706;      /* Orange for pending status */
-    --danger: #dc2626;       /* Red for rejected status */
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
     
     /* Neutral colors */
-    --background: #f8fafc;   /* Light gray page background */
-    --surface: #ffffff;      /* White for cards and containers */
-    --text-primary: #1e293b; /* Dark blue-gray for text */
-    --border: #e2e8f0;       /* Light gray for borders */
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --text-primary: #1e293b;
+    --border: #e2e8f0;
+}
+
+/* ===== DARK THEME VARIABLES ===== */
+[data-bs-theme="dark"] {
+    --background: #1a1a1a;
+    --surface: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --border: #404040;
 }
 
 /* ===== BASE STYLES ===== */
@@ -24,14 +32,31 @@ body {
     background-color: var(--background);
     color: var(--text-primary);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
 }
 
-/* Navbar with academic purple */
+/* Navbar */
 .navbar {
     background-color: var(--primary) !important;
+    transition: all 0.3s ease;
 }
 
-/* Primary buttons */
+[data-bs-theme="dark"] .navbar {
+    background-color: #2d2d2d !important;
+    border-bottom-color: var(--border) !important;
+}
+
+.navbar-brand,
+.nav-link {
+    color: white !important;
+}
+
+[data-bs-theme="dark"] .navbar-brand,
+[data-bs-theme="dark"] .nav-link {
+    color: var(--text-primary) !important;
+}
+
+/* Buttons */
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
@@ -42,17 +67,13 @@ body {
     border-color: var(--primary-dark);
 }
 
-/* Status badges */
-.bg-success { background-color: var(--success) !important; }
-.bg-warning { background-color: var(--warning) !important; }
-.bg-danger { background-color: var(--danger) !important; }
-
-/* Card styling */
+/* Cards */
 .card {
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
 .card-header {
@@ -61,52 +82,100 @@ body {
     border-bottom: none;
 }
 
-/* ===== DRAG & DROP FILE UPLOAD STYLES ===== */
-/* Main drop zone container */
+/* Status badges */
+.bg-success { background-color: var(--success) !important; }
+.bg-warning { background-color: var(--warning) !important; }
+.bg-danger { background-color: var(--danger) !important; }
+
+/* File Upload Styles */
 .file-drop-zone {
-    border: 2px dashed var(--border);          /* Dashed border for drop area */
-    border-radius: 8px;                        /* Rounded corners */
-    padding: 40px 20px;                        /* Generous padding */
-    text-align: center;                        /* Center align content */
-    background-color: #f8fafc;                 /* Light background */
-    transition: all 0.3s ease;                 /* Smooth transitions */
-    cursor: pointer;                           /* Pointer cursor on hover */
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: var(--background);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-/* Hover state for drop zone */
 .file-drop-zone:hover {
-    border-color: var(--primary);              /* Purple border on hover */
-    background-color: #faf5ff;                 /* Light purple background */
+    border-color: var(--primary);
+    background-color: #faf5ff;
 }
 
-/* Active state when dragging files over */
+[data-bs-theme="dark"] .file-drop-zone:hover {
+    background-color: #3d3d3d;
+}
+
 .file-drop-zone.drag-over {
-    border-color: var(--primary);              /* Purple border when active */
-    background-color: #f3e8ff;                 /* Medium purple background */
+    border-color: var(--primary);
+    background-color: #f3e8ff;
 }
 
-/* Container for file preview thumbnails */
+[data-bs-theme="dark"] .file-drop-zone.drag-over {
+    background-color: #4d4d4d;
+}
+
 .file-preview-grid {
-    display: flex;                             /* Flexbox layout */
-    flex-wrap: wrap;                           /* Wrap to multiple lines */
-    gap: 10px;                                 /* Space between items */
-    margin-top: 15px;                          /* Space above previews */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
 }
 
-/* Individual file preview item */
 .file-preview-item {
-    border: 1px solid var(--border);           /* Border around each file */
-    border-radius: 6px;                        /* Rounded corners */
-    padding: 10px;                             /* Internal spacing */
-    text-align: center;                        /* Center content */
-    background: white;                         /* White background */
-    position: relative;                        /* For positioning close button */
-    width: 120px;                              /* Fixed width */
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    background: var(--surface);
+    position: relative;
+    width: 120px;
 }
 
-/* File preview images */
 .file-preview-item img {
-    max-width: 100%;                           /* Responsive images */
-    height: 60px;                              /* Fixed height */
-    object-fit: cover;                         /* Crop to fit */
+    max-width: 100%;
+    height: 60px;
+    object-fit: cover;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.9) !important;  /* White background */
+    border: 2px solid var(--primary) !important;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--primary) !important;
+}
+
+.theme-toggle:hover {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
+#themeIcon {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    color: var(--primary) !important;  /* Force purple color */
+}
+
+[data-bs-theme="dark"] .theme-toggle {
+    background: rgba(45, 45, 45, 0.9) !important;  /* Dark background */
+    border: 2px solid #ffc107 !important;
+    color: #ffc107 !important;
+}
+
+[data-bs-theme="dark"] .theme-toggle:hover {
+    background: #ffc107 !important;
+    color: #2d2d2d !important;
+}
+
+[data-bs-theme="dark"] #themeIcon {
+    color: #ffc107 !important;  /* Force yellow in dark mode */
 }

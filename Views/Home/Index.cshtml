@@ -1,67 +1,74 @@
 ﻿@{
-    ViewData["Title"] = "Submit New Claim - Contract M";
+    ViewData["Title"] = "Dashboard - CMCS";
 }
 
 <div class="container">
-    <h2>Submit New Claim - Contract M</h2>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-
-    <form method="post">
-        <div class="form-group">
-            <label for="Period">Period (Month/Year)</label>
-            <input type="text" class="form-control" id="Period" name="Period" value="December 2025" required>
+    <div class="text-center mb-5">
+        <h1 class="display-4">Contract Monthly Claim System</h1>
+        <p class="lead">Streamlined claim management for academic staff</p>
+        <div class="alert alert-info">
+            <strong>Database Status:</strong> Connected successfully!
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="Amount">Amount</label>
-            <input type="number" class="form-control" id="Amount" name="Amount" value="1200.00" step="0.01" required>
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h3>5</h3>
+                    <p>Registered Users</p>
+                </div>
+            </div>
         </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h3>12</h3>
+                    <p>Total Claims</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h3>3</h3>
+                    <p>Pending Approval</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Submit Claim</button>
-    </form>
-
-    <div class="mt-4">
-       <a asp-controller="Claim" asp-action="Approvals" class="btn btn-success">Review Claims</a>
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">For Lecturers</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p>Submit your monthly claims and track their status</p>
+                    <a asp-controller="Claim" asp-action="Create" class="btn btn-primary me-2">
+                        Submit New Claim
+                    </a>
+                    <a asp-controller="Claim" asp-action="Index" class="btn btn-outline-primary">
+                        View My Claims
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">For Coordinators & Managers</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p>Review and approve pending claims</p>
+                    <a asp-controller="Claim" asp-action="Approvals" class="btn btn-success">
+                        Review Claims
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<style>
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-control { 
-        width: 100%; 
-        padding: 8px; 
-        border: 1px solid #ddd; 
-        border-radius: 4px; 
-        box-sizing: border-box;
-    }
-    .btn { 
-        padding: 10px 20px; 
-        border: none; 
-        border-radius: 4px; 
-        cursor: pointer; 
-        text-decoration: none;
-        display: inline-block;
-        color: white;
-        margin-right: 10px;
-    }
-    .btn-primary { background-color: #007bff; }
-    .btn-secondary { background-color: #6c757d; }
-    .alert { 
-        padding: 10px; 
-        margin-bottom: 15px; 
-        border-radius: 4px; 
-    }
-    .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-</style>

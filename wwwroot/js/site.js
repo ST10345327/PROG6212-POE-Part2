@@ -1,10 +1,51 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿// Dark/Light Theme Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    initializeThemeToggle();
+    initializeFileUpload();
+});
 
-// Write your JavaScript code.
-// Theme Toggle Functionality
+function initializeThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (!themeToggle || !themeIcon) return;
 
-// File Preview Functionality
+    // Load saved theme or default to light
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    // Toggle theme on click
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-bs-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-sun';
+            themeIcon.style.color = '#ffc107';
+        } else {
+            themeIcon.className = 'fas fa-moon';
+            themeIcon.style.color = '#7c3aed';
+        }
+    }
+}
+
+// File Upload Functionality
+function initializeFileUpload() {
+    const dropZone = document.querySelector('.file-drop-zone');
+    if (!dropZone) return;
+
+    dropZone.addEventListener('dragover', handleDragOver);
+    dropZone.addEventListener('drop', handleFileDrop);
+    dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
+}
+
 function handleDragOver(e) {
     e.preventDefault();
     e.currentTarget.classList.add('drag-over');
@@ -18,6 +59,8 @@ function handleFileDrop(e) {
 
 function handleFileSelect(files) {
     const preview = document.getElementById('filePreview');
+    if (!preview) return;
+
     preview.innerHTML = '';
     
     Array.from(files).forEach((file, index) => {
@@ -26,18 +69,12 @@ function handleFileSelect(files) {
         }
     });
     
-    // Update the file input
-    const dataTransfer = new DataTransfer();
-    Array.from(document.querySelectorAll('.file-preview-item')).forEach(item => {
-        dataTransfer.items.add(item.file);
-    });
-    document.getElementById('fileInput').files = dataTransfer.files;
+    updateFileInput();
 }
 
 function validateFile(file) {
     const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['image/', 'application/pdf', 
-                         'application/vnd.openxmlformats-officedocument.'];
+    const allowedTypes = ['image/', 'application/pdf', 'application/vnd.openxmlformats-officedocument.'];
     
     if (file.size > maxSize) {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
@@ -59,8 +96,7 @@ function createFilePreview(file, index) {
     
     reader.onload = function(e) {
         const previewItem = document.createElement('div');
-        previewItem.className = 'file-preview-item glass-card p-3 m-2 d-inline-block';
-        previewItem.style.width = '120px';
+        previewItem.className = 'file-preview-item';
         previewItem.file = file;
         
         let content = '';
@@ -76,7 +112,7 @@ function createFilePreview(file, index) {
             ${content}
             <small class="d-block text-truncate" style="max-width: 100px;">${file.name}</small>
             <small class="text-secondary">${(file.size / 1024 / 1024).toFixed(1)}MB</small>
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-1" 
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-1" 
                     onclick="removeFilePreview(this)"></button>
         `;
         
@@ -86,7 +122,7 @@ function createFilePreview(file, index) {
     if (file.type.includes('image')) {
         reader.readAsDataURL(file);
     } else {
-        reader.readAsText(file.slice(0, 100)); // Read first 100 chars for text preview
+        reader.readAsText(file.slice(0, 100));
     }
 }
 
@@ -96,9 +132,12 @@ function removeFilePreview(button) {
 }
 
 function updateFileInput() {
+    const fileInput = document.getElementById('fileInput');
+    if (!fileInput) return;
+
     const dataTransfer = new DataTransfer();
     document.querySelectorAll('.file-preview-item').forEach(item => {
         dataTransfer.items.add(item.file);
     });
-    document.getElementById('fileInput').files = dataTransfer.files;
+    fileInput.files = dataTransfer.files;
 }
