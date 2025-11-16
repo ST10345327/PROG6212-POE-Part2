@@ -60,3 +60,7 @@ C:\Users\phawe\CMCS.WebApp\obj\Debug\net8.0\CMCS.WebApp.pdb
 C:\Users\phawe\CMCS.WebApp\obj\Debug\net8.0\CMCS.WebApp.genruntimeconfig.cache
 C:\Users\phawe\CMCS.WebApp\obj\Debug\net8.0\ref\CMCS.WebApp.dll
 C:\Users\phawe\CMCS.WebApp\obj\Debug\net8.0\CMCS.WebApp.sourcelink.json
+C:\Users\phawe\CMCS.WebApp\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\phawe\CMCS.WebApp\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\Users\phawe\CMCS.WebApp\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\phawe\CMCS.WebApp\obj\Debug\net8.0\CMCS.WebApp.MvcApplicationPartsAssemblyInfo.cs
