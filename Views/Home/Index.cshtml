@@ -1,74 +1,192 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard - CMCS";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container">
-    <div class="text-center mb-5">
-        <h1 class="display-4">Contract Monthly Claim System</h1>
-        <p class="lead">Streamlined claim management for academic staff</p>
-        <div class="alert alert-info">
-            <strong>Database Status:</strong> Connected successfully!
+<div class="text-center">
+    <h1 class="display-4">Contract Monthly Claim System</h1>
+    
+    @if (!Context.Session.GetInt32("UserId").HasValue)
+    {
+        <!-- PUBLIC LANDING PAGE -->
+        <div class="row mt-5">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Welcome to CMCS</h3>
+                        <p class="lead">Please login to access the claim management system.</p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-lg">Login to Continue</a>
+                        
+                        <div class="mt-4">
+                            <h6>Demo Accounts:</h6>
+                            <div class="text-start">
+                                <small>
+                                    <strong>Lecturer:</strong> lecturer@cmcs.com / password<br>
+                                    <strong>Coordinator:</strong> coordinator@cmcs.com / password<br>
+                                    <strong>Manager:</strong> manager@cmcs.com / password
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <!-- PRIVATE DASHBOARD -->
+        var userName = Context.Session.GetString("UserName");
+        var userRole = Context.Session.GetString("UserRole");
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h4>Welcome back, @userName!</h4>
+                    <p>Role: <strong>@userRole</strong></p>
+                </div>
+            </div>
+        </div>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary">
-                <div class="card-body text-center">
-                    <h3>5</h3>
-                    <p>Registered Users</p>
+        <!-- Dashboard Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Users</h5>
+                        <h2>@ViewBag.UserCount</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Claims</h5>
+                        <h2>@ViewBag.ClaimCount</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Approval</h5>
+                        <h2>@ViewBag.PendingClaims</h2>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success">
-                <div class="card-body text-center">
-                    <h3>12</h3>
-                    <p>Total Claims</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-warning">
-                <div class="card-body text-center">
-                    <h3>3</h3>
-                    <p>Pending Approval</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">For Lecturers</h5>
-                </div>
-                <div class="card-body text-center">
-                    <p>Submit your monthly claims and track their status</p>
-                    <a asp-controller="Claim" asp-action="Create" class="btn btn-primary me-2">
-                        Submit New Claim
-                    </a>
-                    <a asp-controller="Claim" asp-action="Index" class="btn btn-outline-primary">
-                        View My Claims
-                    </a>
+        <!-- Database Status -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="alert alert-secondary">
+                    <strong>Database Status:</strong> @ViewBag.DatabaseStatus
                 </div>
             </div>
         </div>
-        <div class="col-md-6 mb-3">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">For Coordinators & Managers</h5>
-                </div>
-                <div class="card-body text-center">
-                    <p>Review and approve pending claims</p>
-                    <a asp-controller="Claim" asp-action="Approvals" class="btn btn-success">
-                        Review Claims
-                    </a>
+
+        <!-- Role-specific content -->
+        @if (userRole == "Lecturer")
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>My Recent Claims</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (ViewBag.MyClaims != null && ViewBag.MyClaims.Count > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Period</th>
+                                                <th>Hours</th>
+                                                <th>Rate</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var claim in ViewBag.MyClaims)
+                                            {
+                                                <tr>
+                                                    <td>@claim.Period.ToString("MMMM yyyy")</td>
+                                                    <td>@claim.HoursWorked</td>
+                                                    <td>R @claim.Rate</td>
+                                                    <td>R @(claim.HoursWorked * claim.Rate)</td>
+                                                    <td>
+                                                        <span class="badge @(claim.Status == "Approved" ? "bg-success" : claim.Status == "Rejected" ? "bg-danger" : "bg-warning")">
+                                                            @claim.Status
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p>You haven't submitted any claims yet.</p>
+                            }
+                            <a href="@Url.Action("Create", "Claim")" class="btn btn-success">Submit New Claim</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        }
+        else if (userRole == "Coordinator" || userRole == "Manager")
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Recent Claims Needing Approval</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (ViewBag.RecentClaims != null && ViewBag.RecentClaims.Count > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Lecturer</th>
+                                                <th>Period</th>
+                                                <th>Hours</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                                <th>Submitted</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var claim in ViewBag.RecentClaims)
+                                            {
+                                                <tr>
+                                                    <td>@claim.Lecturer?.Name</td>
+                                                    <td>@claim.Period.ToString("MMMM yyyy")</td>
+                                                    <td>@claim.HoursWorked</td>
+                                                    <td>R @(claim.HoursWorked * claim.Rate)</td>
+                                                    <td>
+                                                        <span class="badge @(claim.Status == "Approved" ? "bg-success" : claim.Status == "Rejected" ? "bg-danger" : "bg-warning")">
+                                                            @claim.Status
+                                                        </span>
+                                                    </td>
+                                                    <td>@claim.SubmitDate?.ToString("MMM dd, yyyy")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p>No recent claims found.</p>
+                            }
+                            <a href="@Url.Action("Approvals", "Claim")" class="btn btn-warning">Review All Claims</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>
