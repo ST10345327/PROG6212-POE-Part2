@@ -18,8 +18,19 @@ namespace CMCS.WebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Check if user is logged in
+            if (!IsLoggedIn())
+            {
+                // Show public landing page without sensitive data
+                ViewBag.IsLoggedIn = false;
+                return View();
+            }
+
+            // User is logged in - show personalized dashboard
             try
             {
+                var currentUser = GetCurrentUser();
+                
                 // Get database statistics for the dashboard
                 var userCount = await _context.Users.CountAsync();
                 var claimCount = await _context.Claims.CountAsync();
@@ -30,6 +41,26 @@ namespace CMCS.WebApp.Controllers
                 ViewBag.ClaimCount = claimCount;
                 ViewBag.PendingClaims = pendingClaims;
                 ViewBag.DatabaseStatus = "Connected successfully!";
+                ViewBag.CurrentUser = currentUser;
+                ViewBag.IsLoggedIn = true;
+
+                // FIXED: Added null check for currentUser before accessing UserId
+                if (currentUser != null && IsInRole("Lecturer"))
+                {
+                    var myClaims = await _context.Claims
+                        .Where(c => c.LecturerId == currentUser.UserId)
+                        .ToListAsync();
+                    ViewBag.MyClaims = myClaims;
+                }
+                else if (IsInRole("Coordinator") || IsInRole("Manager"))
+                {
+                    var recentClaims = await _context.Claims
+                        .Include(c => c.Lecturer)
+                        .OrderByDescending(c => c.SubmitDate)
+                        .Take(5)
+                        .ToListAsync();
+                    ViewBag.RecentClaims = recentClaims;
+                }
             }
             catch (Exception ex)
             {
@@ -38,8 +69,19 @@ namespace CMCS.WebApp.Controllers
                 ViewBag.UserCount = 0;
                 ViewBag.ClaimCount = 0;
                 ViewBag.PendingClaims = 0;
+                ViewBag.IsLoggedIn = IsLoggedIn();
             }
 
+            return View();
+        }
+
+        public IActionResult Analytics()
+        {
+            // Simple authorization check
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login", "Account");
+            }
             return View();
         }
 
@@ -51,7 +93,29 @@ namespace CMCS.WebApp.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View();
+            return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // Helper methods
+        private bool IsLoggedIn()
+        {
+            return HttpContext.Session.GetInt32("UserId").HasValue;
+        }
+
+        private bool IsInRole(string role)
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            return userRole == role;
+        }
+
+        private User? GetCurrentUser()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId.HasValue)
+            {
+                return _context.Users.FirstOrDefault(u => u.UserId == userId.Value);
+            }
+            return null;
         }
     }
 }
