@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card mt-5">
+            <div class="card-header">
+                <h3 class="text-center">Login to CMCS</h3>
+            </div>
+            <div class="card-body">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                }
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                }
+
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required 
+                               placeholder="Enter your email" value="lecturer@cmcs.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               placeholder="Enter your password" value="password">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+
+                <div class="mt-3">
+                    <h6>Test Accounts:</h6>
+                    <small class="text-muted">
+                        <strong>Lecturer:</strong> lecturer@cmcs.com / password<br>
+                        <strong>Coordinator:</strong> coordinator@cmcs.com / password<br>
+                        <strong>Manager:</strong> manager@cmcs.com / password
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
